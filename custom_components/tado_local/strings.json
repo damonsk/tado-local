@@ -1,0 +1,40 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tado Local",
+        "description": "Connect to Tado Local API. Enter the IP address and Port of the service.",
+        "data": {
+          "ip_address": "IP Address",
+          "port": "Port",
+          "update_interval": "Update Interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect. Check IP and Port.",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "humidity": {
+        "name": "Humidity"
+      },
+      "serial_number": {
+        "name": "Serial Number"
+      }
+    },
+    "binary_sensor": {
+      "heating_active": {
+        "name": "Heating Active"
+      },
+      "battery_low": {
+        "name": "Battery"
+      }
+    }
+  }
+}
