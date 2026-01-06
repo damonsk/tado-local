@@ -30,12 +30,19 @@ This integration connects to the TadoLocal API (usually on port `4407`).
 
 ## 🛠 Installation
 
-### 1️⃣ Manual Installation
-1. Download the `tado_local` folder from this repository.
-2. Copy the `tado_local` folder into `config/custom_components/` in your Home Assistant directory.
+### 1️⃣ Install via HACS (Recommended)
+1. Open Home Assistant and install [HACS](https://hacs.xyz/).
+2. Go to **HACS** → **Integrations** → **Add Custom Repository**.
+3. Enter the repository URL: `https://github.com/yourusername/tado-local`.
+4. Click **Install** and restart Home Assistant.
+5. Navigate to **Settings** → **Devices & Services** → **Add Integration** → Search for **Tado Local**.
+6. Enter your TadoLocal ip and port.
+
+### 2️⃣ Manual Installation
+1. Download the latest release from [GitHub Releases](https://github.com/array81/tado-local/releases).
+2. Extract the `tado_local` folder into `config/custom_components/` in your Home Assistant directory.
 3. Restart Home Assistant.
-4. Navigate to **Settings** → **Devices & Services** → **Add Integration**.
-5. Search for **Tado Local**.
+4. Add the integration via **Settings** → **Devices & Services**.
 
 ## ⚙️ Configuration
 During the setup, you will be asked for:
@@ -48,10 +55,10 @@ During the setup, you will be asked for:
 
 | Entity Type | Name Example | Description |
 |:---|:---|:---|
-| **Climate** | `climate.piano_terra` | Controls target temperature and mode (Heat/Off/Auto). |
-| **Sensor** | `sensor.piano_terra_humidity` | Current humidity percentage in the room. |
+| **Climate** | `climate.ground_floor` | Controls target temperature and mode (Heat/Off/Auto). |
+| **Sensor** | `sensor.ground_floor_humidity` | Current humidity percentage in the room. |
 | **Sensor** | `sensor.tado_ru123456...` | Displays the device serial number. |
-| **Binary Sensor** | `binary_sensor.piano_terra_heating_active` | `On` when the valve is open/requesting heat. |
+| **Binary Sensor** | `binary_sensor.ground_floor_heating_active` | `On` when the valve is open/requesting heat. |
 | **Binary Sensor** | `binary_sensor.tado_ru123456_battery` | `On` when the device battery is **Low**. |
 
 ### Smart Control Logic
@@ -59,9 +66,6 @@ The integration implements specific logic to map Home Assistant modes to Tado AP
 - **Set to OFF**: Sends `0` to the API (Valve closed).
 - **Set to AUTO**: Sends `-1` to the API (Resumes Schedule).
 - **Set Temperature**: Sends the target temperature and switches to Manual Mode.
-
-## 🖼 Screenshots
-*(Add here your screenshots of the Climate card and Device panel)*
 
 ## 🤝 Contributing
 Contributions are welcome!
