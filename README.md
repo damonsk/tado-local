@@ -26,6 +26,7 @@ Unlike the standard integration, **this component does not rely on Tado Cloud**.
 
 ## 🛠 Prerequisites
 Before installing this integration, you **must** have the **TadoLocal** service running on your network (e.g., via Docker).
+If you want to use Docker here you can find a simple guide: [DOCKER GUIDE](/DOCKER.md).
 This integration connects to the TadoLocal API (usually on port `4407`).
 
 ## 🛠 Installation
