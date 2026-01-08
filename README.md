@@ -81,6 +81,10 @@ This project is licensed under the MIT License.
 
 ## 📌 Changelog
 
+### v1.0.3
+- **New**: Change settings after first configuration.
+- **Improved**: Added temperature and target temperature sensors.
+
 ### v1.0.2
 - **Fixed**: Correct parsing of Serial Numbers and Battery status from `/devices` endpoint.
 - **Improved**: Added correct manufacturer icons and standardized model names.

@@ -1,7 +1,7 @@
 {
     "domain": "tado_local",
     "name": "Tado Local",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "documentation": "https://github.com/array81/tado-local",
     "codeowners": [
         "@array81"

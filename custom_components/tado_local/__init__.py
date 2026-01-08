@@ -19,9 +19,12 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Configura l'integrazione da una config entry."""
     
-    ip = entry.data[CONF_IP_ADDRESS]
-    port = entry.data[CONF_PORT]
-    interval = entry.data[CONF_UPDATE_INTERVAL]
+    # Legge dai dati iniziali o dalle opzioni modificate
+    config = entry.options if entry.options else entry.data
+    
+    ip = config.get(CONF_IP_ADDRESS, entry.data.get(CONF_IP_ADDRESS))
+    port = config.get(CONF_PORT, entry.data.get(CONF_PORT))
+    interval = config.get(CONF_UPDATE_INTERVAL, entry.data.get(CONF_UPDATE_INTERVAL))
     
     base_url = f"http://{ip}:{port}"
 
@@ -30,23 +33,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         async with aiohttp.ClientSession() as session:
             try:
                 async with async_timeout.timeout(15):
-                    # Scarichiamo le Zone
+                    # Zone
                     async with session.get(f"{base_url}/zones") as resp_zones:
                         if resp_zones.status != 200:
                             raise UpdateFailed(f"Errore API Zones: {resp_zones.status}")
                         zones_json = await resp_zones.json()
 
-                    # [cite_start]Scarichiamo i Device (per le batterie) [cite: 522]
+                    # Device
                     async with session.get(f"{base_url}/devices") as resp_devices:
                         if resp_devices.status != 200:
                             raise UpdateFailed(f"Errore API Devices: {resp_devices.status}")
                         devices_json = await resp_devices.json()
 
-                    # Normalizziamo i dati in un unico dizionario
-                    # Gestione robusta per le zone (se sono in lista o dict)
                     zones_list = zones_json.get("zones", zones_json) if isinstance(zones_json, dict) else zones_json
-                    
-                    # Gestione robusta per i device
                     devices_list = devices_json.get("devices", devices_json) if isinstance(devices_json, dict) else devices_json
 
                     return {
@@ -81,15 +80,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    
+    # Listener per ricaricare se le opzioni cambiano
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+    
     return True
 
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
+    """Ricarica l'integrazione quando le opzioni cambiano."""
+    await hass.config_entries.async_reload(entry.entry_id)
+
 async def sse_listener(hass: HomeAssistant, coordinator: DataUpdateCoordinator, base_url: str):
-    """Ascolta lo stream SSE per aggiornamenti real-time."""
+    """Ascolta lo stream SSE."""
     url = f"{base_url}/events"
-    
     while True:
         try:
-            _LOGGER.debug("Avvio connessione SSE a %s", url)
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, timeout=None) as response:
                     async for line in response.content:
@@ -105,16 +110,13 @@ async def sse_listener(hass: HomeAssistant, coordinator: DataUpdateCoordinator, 
             await asyncio.sleep(10)
 
 def handle_event(coordinator: DataUpdateCoordinator, event: dict):
-    """Aggiorna i dati del coordinator localmente."""
+    """Aggiorna i dati locali."""
     event_type = event.get("type")
-    
     current_data = coordinator.data
     zones_list = current_data.get("zones", [])
     devices_list = current_data.get("devices", [])
-    
     updated = False
 
-    # [cite_start]Evento ZONA [cite: 723]
     if event_type == "zone":
         zone_id = event.get("zone_id")
         new_state = event.get("state")
@@ -122,12 +124,10 @@ def handle_event(coordinator: DataUpdateCoordinator, event: dict):
             for zone in zones_list:
                 zid = zone.get("zone_id") or zone.get("id")
                 if zid == zone_id:
-                    # Inseriamo il nuovo stato
                     zone["state"] = new_state
                     updated = True
                     break
 
-    # [cite_start]Evento DEVICE (Batteria, etc.) [cite: 721]
     elif event_type == "device":
         device_id = event.get("device_id")
         new_state = event.get("state")
@@ -135,7 +135,6 @@ def handle_event(coordinator: DataUpdateCoordinator, event: dict):
             for device in devices_list:
                 did = device.get("device_id") or device.get("id")
                 if did == device_id:
-                    # Inseriamo il nuovo stato
                     device["state"] = new_state
                     updated = True
                     break
@@ -147,7 +146,6 @@ def handle_event(coordinator: DataUpdateCoordinator, event: dict):
         })
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Rimuove l'integrazione."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Tado Local",
-        "description": "Connetti all'API Tado Local. Inserisci l'indirizzo IP e la porta del servizio.",
+        "description": "Connetti all'API Tado Local.",
         "data": {
           "ip_address": "Indirizzo IP",
           "port": "Porta",
@@ -12,11 +12,23 @@
       }
     },
     "error": {
-      "cannot_connect": "Impossibile connettersi. Controlla IP e Porta.",
+      "cannot_connect": "Impossibile connettersi.",
       "unknown": "Errore imprevisto"
     },
     "abort": {
-      "already_configured": "Il dispositivo è già configurato"
+      "already_configured": "Dispositivo già configurato"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configura Tado Local",
+        "data": {
+          "ip_address": "Indirizzo IP",
+          "port": "Porta",
+          "update_interval": "Intervallo di aggiornamento (secondi)"
+        }
+      }
     }
   },
   "entity": {
@@ -26,11 +38,17 @@
       },
       "serial_number": {
         "name": "Numero di Serie"
+      },
+      "current_temperature": {
+        "name": "Temperatura"
+      },
+      "target_temperature": {
+        "name": "Temperatura Target"
       }
     },
     "binary_sensor": {
       "heating_active": {
-        "name": "Riscaldamento Attivo"
+        "name": "Stato"
       },
       "battery_low": {
         "name": "Batteria"

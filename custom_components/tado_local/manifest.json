@@ -1,10 +1,10 @@
 {
   "domain": "tado_local",
   "name": "Tado Local",
-  "codeowners": ["@array81"],
+  "codeowners": [],
   "config_flow": true,
-  "documentation": "https://github.com/array81/tado-local",
+  "documentation": "https://github.com/ampscm/TadoLocal",
   "requirements": [],
   "iot_class": "local_push",
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
