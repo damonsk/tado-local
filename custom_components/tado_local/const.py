@@ -9,7 +9,7 @@ CONF_UPDATE_INTERVAL = "update_interval"
 DEFAULT_UPDATE_INTERVAL = 30
 DEFAULT_PORT = 4407
 
-PLATFORMS = ["climate", "sensor", "binary_sensor"]
+PLATFORMS = ["climate", "sensor", "binary_sensor", "water_heater"]
 
 # Uniformiamo il produttore per far apparire il logo Tado ufficiale
 MANUFACTURER = "Tado"
@@ -21,7 +21,8 @@ MODEL_MAP = {
     "smart_ac_control": "Smart AC Control",
     "radiator_valve": "Radiator Thermostat",
     "extension_kit": "Extension Kit",
-    "zone_control": "Zone Control" # Nome logico per le zone
+    "zone_control": "Zone Control", # Nome logico per le zone
+    "hot_water": "Hot Water"
 }
 
 def format_model(raw_model):

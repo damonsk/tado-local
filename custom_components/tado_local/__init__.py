@@ -48,6 +48,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     zones_list = zones_json.get("zones", zones_json) if isinstance(zones_json, dict) else zones_json
                     devices_list = devices_json.get("devices", devices_json) if isinstance(devices_json, dict) else devices_json
 
+                    # Enrich hot water zones with detailed state/capabilities
+                    hw_zones = [z for z in zones_list if z.get("zone_type") == "HOT_WATER"]
+                    for zone in hw_zones:
+                        zid = zone.get("zone_id") or zone.get("id")
+                        if zid is None:
+                            continue
+                        try:
+                            async with session.get(f"{base_url}/hot_water/{zid}") as resp_hw:
+                                if resp_hw.status == 200:
+                                    hw_json = await resp_hw.json()
+                                    # Merge state details back into zone.state.hot_water
+                                    if "state" in hw_json:
+                                        zone.setdefault("state", {})
+                                        zone["state"]["hot_water"] = hw_json["state"]
+                                else:
+                                    _LOGGER.debug("Hot water API %s returned %s", zid, resp_hw.status)
+                        except Exception as err:
+                            _LOGGER.debug("Errore caricamento hot water %s: %s", zid, err)
+
                     return {
                         "zones": zones_list,
                         "devices": devices_list

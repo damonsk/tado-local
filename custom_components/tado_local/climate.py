@@ -29,8 +29,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
     entities = []
     zones_list = coordinator.data.get("zones", [])
-    
+
     for zone in zones_list:
+        if zone.get("zone_type") == "HOT_WATER":
+            continue  # handled by water_heater platform
         entities.append(TadoLocalClimate(coordinator, zone, base_url))
 
     async_add_entities(entities)
